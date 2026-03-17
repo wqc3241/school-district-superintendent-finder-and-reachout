@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { SortableHeader } from "@/components/sortable-header";
+import { useSort } from "@/hooks/use-sort";
 import {
   Card,
   CardContent,
@@ -56,6 +58,7 @@ const statusColor: Record<string, string> = {
 
 export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const { sort, handleSort, sortedData: sortedCampaigns } = useSort(campaigns);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newName, setNewName] = useState("");
@@ -208,19 +211,19 @@ export default function CampaignsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Campaign</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Enrolled</TableHead>
-                  <TableHead className="text-right">Sent</TableHead>
-                  <TableHead className="text-right">Opened</TableHead>
-                  <TableHead className="text-right">Clicked</TableHead>
-                  <TableHead className="text-right">Replied</TableHead>
-                  <TableHead className="text-right">Bounced</TableHead>
-                  <TableHead>Created</TableHead>
+                  <SortableHeader label="Campaign" sortKey="name" currentSort={sort} onSort={handleSort} />
+                  <SortableHeader label="Status" sortKey="status" currentSort={sort} onSort={handleSort} />
+                  <SortableHeader label="Enrolled" sortKey="enrolled" currentSort={sort} onSort={handleSort} className="text-right" />
+                  <SortableHeader label="Sent" sortKey="sent" currentSort={sort} onSort={handleSort} className="text-right" />
+                  <SortableHeader label="Opened" sortKey="opened" currentSort={sort} onSort={handleSort} className="text-right" />
+                  <SortableHeader label="Clicked" sortKey="clicked" currentSort={sort} onSort={handleSort} className="text-right" />
+                  <SortableHeader label="Replied" sortKey="replied" currentSort={sort} onSort={handleSort} className="text-right" />
+                  <SortableHeader label="Bounced" sortKey="bounced" currentSort={sort} onSort={handleSort} className="text-right" />
+                  <SortableHeader label="Created" sortKey="createdAt" currentSort={sort} onSort={handleSort} />
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {campaigns.map((c) => (
+                {sortedCampaigns.map((c) => (
                   <TableRow key={c.id} className="cursor-pointer">
                     <TableCell>
                       <Link

@@ -24,3 +24,7 @@ Thumbs.db
 
 # Claude
 .claude/
+*.zip
+*.xlsx
+*.pdf
+*.csv

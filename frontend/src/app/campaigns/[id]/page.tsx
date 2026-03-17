@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { SortableHeader } from "@/components/sortable-header";
+import { useSort } from "@/hooks/use-sort";
 import {
   Card,
   CardContent,
@@ -57,6 +59,8 @@ export default function CampaignDetailPage() {
   const [campaign, setCampaign] = useState<CampaignDetail | null>(null);
   const [analytics, setAnalytics] = useState<CampaignAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
+  const { sort: enrollmentSort, handleSort: handleEnrollmentSort, sortedData: sortedEnrollments } = useSort(campaign?.enrollments ?? []);
+  const { sort: dailySort, handleSort: handleDailySort, sortedData: sortedDailyStats } = useSort(analytics?.dailyStats ?? []);
 
   useEffect(() => {
     async function load() {
@@ -249,17 +253,17 @@ export default function CampaignDetailPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>District</TableHead>
-                      <TableHead className="text-center">Step</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Enrolled</TableHead>
-                      <TableHead>Last Activity</TableHead>
+                      <SortableHeader label="Contact" sortKey="contactName" currentSort={enrollmentSort} onSort={handleEnrollmentSort} />
+                      <SortableHeader label="Email" sortKey="contactEmail" currentSort={enrollmentSort} onSort={handleEnrollmentSort} />
+                      <SortableHeader label="District" sortKey="districtName" currentSort={enrollmentSort} onSort={handleEnrollmentSort} />
+                      <SortableHeader label="Step" sortKey="currentStep" currentSort={enrollmentSort} onSort={handleEnrollmentSort} className="text-center" />
+                      <SortableHeader label="Status" sortKey="status" currentSort={enrollmentSort} onSort={handleEnrollmentSort} />
+                      <SortableHeader label="Enrolled" sortKey="enrolledAt" currentSort={enrollmentSort} onSort={handleEnrollmentSort} />
+                      <SortableHeader label="Last Activity" sortKey="lastActivityAt" currentSort={enrollmentSort} onSort={handleEnrollmentSort} />
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {campaign.enrollments.map((e) => (
+                    {sortedEnrollments.map((e) => (
                       <TableRow key={e.id}>
                         <TableCell className="font-medium">
                           {e.contactName}
@@ -310,16 +314,16 @@ export default function CampaignDetailPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Sent</TableHead>
-                    <TableHead className="text-right">Opened</TableHead>
-                    <TableHead className="text-right">Clicked</TableHead>
-                    <TableHead className="text-right">Replied</TableHead>
+                    <SortableHeader label="Date" sortKey="date" currentSort={dailySort} onSort={handleDailySort} />
+                    <SortableHeader label="Sent" sortKey="sent" currentSort={dailySort} onSort={handleDailySort} className="text-right" />
+                    <SortableHeader label="Opened" sortKey="opened" currentSort={dailySort} onSort={handleDailySort} className="text-right" />
+                    <SortableHeader label="Clicked" sortKey="clicked" currentSort={dailySort} onSort={handleDailySort} className="text-right" />
+                    <SortableHeader label="Replied" sortKey="replied" currentSort={dailySort} onSort={handleDailySort} className="text-right" />
                     <TableHead className="text-right">Open Rate</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {analytics.dailyStats.map((day) => (
+                  {sortedDailyStats.map((day) => (
                     <TableRow key={day.date}>
                       <TableCell className="font-medium">
                         {formatDate(day.date + "T00:00:00Z")}

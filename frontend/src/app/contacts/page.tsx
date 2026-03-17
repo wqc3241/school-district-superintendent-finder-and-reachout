@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { SortableHeader } from "@/components/sortable-header";
+import { useSort } from "@/hooks/use-sort";
 import {
   Card,
   CardContent,
@@ -86,6 +88,8 @@ export default function ContactsPage() {
     page: 1,
     pageSize: 20,
   });
+
+  const { sort, handleSort, sortedData: sortedContacts } = useSort(contacts);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -333,18 +337,18 @@ export default function ContactsPage() {
                       className="h-4 w-4 rounded border-gray-300"
                     />
                   </TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>District</TableHead>
-                  <TableHead className="w-[60px]">State</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead className="text-right">Confidence</TableHead>
+                  <SortableHeader label="Name" sortKey="lastName" currentSort={sort} onSort={handleSort} />
+                  <SortableHeader label="Role" sortKey="role" currentSort={sort} onSort={handleSort} />
+                  <SortableHeader label="District" sortKey="districtName" currentSort={sort} onSort={handleSort} />
+                  <SortableHeader label="State" sortKey="state" currentSort={sort} onSort={handleSort} className="w-[60px]" />
+                  <SortableHeader label="Email" sortKey="email" currentSort={sort} onSort={handleSort} />
+                  <SortableHeader label="Status" sortKey="emailStatus" currentSort={sort} onSort={handleSort} />
+                  <SortableHeader label="Phone" sortKey="phone" currentSort={sort} onSort={handleSort} />
+                  <SortableHeader label="Confidence" sortKey="confidenceScore" currentSort={sort} onSort={handleSort} className="text-right" />
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {contacts.map((c) => (
+                {sortedContacts.map((c) => (
                   <TableRow key={c.id}>
                     <TableCell>
                       <input

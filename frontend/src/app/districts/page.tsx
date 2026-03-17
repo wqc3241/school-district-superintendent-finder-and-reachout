@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SortableHeader } from "@/components/sortable-header";
+import { useSort } from "@/hooks/use-sort";
 import {
   Card,
   CardContent,
@@ -46,6 +48,8 @@ export default function DistrictsPage() {
     page: 1,
     pageSize: 20,
   });
+
+  const { sort, handleSort, sortedData: sortedDistricts } = useSort(districts);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -222,18 +226,18 @@ export default function DistrictsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="w-[60px]">State</TableHead>
-                  <TableHead>City</TableHead>
-                  <TableHead className="text-right">ELL Students</TableHead>
-                  <TableHead className="text-right">ELL %</TableHead>
-                  <TableHead className="text-right">Title I</TableHead>
-                  <TableHead className="text-right">Title III</TableHead>
-                  <TableHead className="w-[120px]">Funding</TableHead>
+                  <SortableHeader label="Name" sortKey="name" currentSort={sort} onSort={handleSort} />
+                  <SortableHeader label="State" sortKey="state" currentSort={sort} onSort={handleSort} className="w-[60px]" />
+                  <SortableHeader label="City" sortKey="city" currentSort={sort} onSort={handleSort} />
+                  <SortableHeader label="ELL Students" sortKey="ellStudents" currentSort={sort} onSort={handleSort} className="text-right" />
+                  <SortableHeader label="ELL %" sortKey="ellPercentage" currentSort={sort} onSort={handleSort} className="text-right" />
+                  <SortableHeader label="Title I" sortKey="titleIFunding" currentSort={sort} onSort={handleSort} className="text-right" />
+                  <SortableHeader label="Title III" sortKey="titleIIIFunding" currentSort={sort} onSort={handleSort} className="text-right" />
+                  <SortableHeader label="Funding" sortKey="hasTitleI" currentSort={sort} onSort={handleSort} className="w-[120px]" />
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {districts.map((d) => (
+                {sortedDistricts.map((d) => (
                   <TableRow key={d.id} className="cursor-pointer">
                     <TableCell>
                       <Link
