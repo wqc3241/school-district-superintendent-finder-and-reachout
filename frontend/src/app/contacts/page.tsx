@@ -425,6 +425,23 @@ export default function ContactsPage() {
           </div>
         )}
       </Card>
+
+      {/* Data Source Disclaimer */}
+      <div className="rounded-lg border border-dashed p-4 text-xs text-muted-foreground">
+        <p className="font-medium mb-1">Data Sources</p>
+        <ul className="list-disc list-inside space-y-0.5">
+          <li>Florida: <a href="https://www.fldoe.org/accountability/data-sys/school-dis-data/superintendents.stml" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">FL Department of Education</a></li>
+          <li>California: <a href="https://www.cde.ca.gov/ds/si/ds/pubschls.asp" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">CA Department of Education (CDE)</a></li>
+          <li>Texas: <a href="https://tea.texas.gov/texas-schools/general-information/school-district-locator" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">TX Education Agency (TEA)</a></li>
+          <li>New York: <a href="https://www.p12.nysed.gov/ims/schoolDirectory/" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">NY State Education Department (NYSED)</a></li>
+          <li>Illinois: <a href="https://www.isbe.net/Pages/Illinois-Directory-of-Educational-Entities.aspx" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">IL State Board of Education (ISBE)</a></li>
+          <li>Massachusetts: <a href="https://profiles.doe.mass.edu/" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">MA Department of Elementary &amp; Secondary Education (DESE)</a></li>
+          <li>Washington: <a href="https://eds.ospi.k12.wa.us/DirectoryEDS.aspx" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">WA Office of Superintendent of Public Instruction (OSPI)</a></li>
+          <li>Oregon: <a href="https://www.oregon.gov/ode/" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">OR Department of Education (ODE)</a></li>
+          <li>New Jersey: <a href="https://www.nj.gov/education/" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">NJ Department of Education</a></li>
+        </ul>
+        <p className="mt-1.5 text-[10px]">Contact data is sourced from publicly available state education department directories. Superintendent turnover is ~15–20% annually — data is verified periodically but may not reflect the most recent personnel changes.</p>
+      </div>
     </div>
   );
 }

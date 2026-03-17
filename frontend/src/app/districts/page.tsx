@@ -314,6 +314,18 @@ export default function DistrictsPage() {
           </div>
         )}
       </Card>
+
+      {/* Data Source Disclaimer */}
+      <div className="rounded-lg border border-dashed p-4 text-xs text-muted-foreground">
+        <p className="font-medium mb-1">Data Sources</p>
+        <ul className="list-disc list-inside space-y-0.5">
+          <li>District data: <a href="https://nces.ed.gov/ccd/" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">NCES Common Core of Data (CCD)</a> — U.S. Department of Education</li>
+          <li>ELL student counts: <a href="https://educationdata.urban.org/" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">Urban Institute Education Data Portal</a></li>
+          <li>Title I funding: <a href="https://www.ed.gov/grants-and-programs/formula-grants" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">U.S. Department of Education Formula Grants</a></li>
+          <li>Title III funding: <a href="https://ncela.ed.gov/title-iii-state-formula-grants" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">National Clearinghouse for English Language Acquisition (NCELA)</a></li>
+        </ul>
+        <p className="mt-1.5 text-[10px]">Data may be 1–2 years behind current school year. District counts and funding amounts are based on the most recent federal reporting cycle available.</p>
+      </div>
     </div>
   );
 }
