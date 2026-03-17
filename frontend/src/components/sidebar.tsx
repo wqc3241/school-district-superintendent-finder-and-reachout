@@ -17,9 +17,9 @@ const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/districts", label: "Districts", icon: Building2 },
   { href: "/contacts", label: "Contacts", icon: Users },
-  { href: "/campaigns", label: "Campaigns", icon: Send },
-  { href: "/templates", label: "Templates", icon: FileText },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/campaigns", label: "Campaigns", icon: Send, badge: "Mockup" },
+  { href: "/templates", label: "Templates", icon: FileText, badge: "Mockup" },
+  { href: "/settings", label: "Settings", icon: Settings, badge: "Mockup" },
 ];
 
 export function Sidebar() {
@@ -60,6 +60,11 @@ export function Sidebar() {
             >
               <item.icon className="h-4 w-4" />
               {item.label}
+              {item.badge && (
+                <span className="ml-auto rounded-full bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
+                  {item.badge}
+                </span>
+              )}
             </Link>
           );
         })}
@@ -68,7 +73,7 @@ export function Sidebar() {
       {/* Footer */}
       <div className="border-t px-6 py-4">
         <p className="text-xs text-muted-foreground">
-          v1.0.0 &middot; Mock Data Mode
+          v1.0.0
         </p>
       </div>
     </aside>
