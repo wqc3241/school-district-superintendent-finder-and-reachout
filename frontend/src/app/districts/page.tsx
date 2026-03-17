@@ -32,7 +32,6 @@ import {
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { getDistricts } from "@/lib/api";
 import { District, DistrictFilters } from "@/types";
-import { US_STATES } from "@/lib/mock-data";
 import { formatNumber, formatCurrency, formatPercent } from "@/lib/format";
 
 export default function DistrictsPage() {
@@ -40,6 +39,7 @@ export default function DistrictsPage() {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [stateOptions, setStateOptions] = useState<string[]>([]);
   const [filters, setFilters] = useState<DistrictFilters>({
     search: "",
     state: "",
@@ -50,6 +50,10 @@ export default function DistrictsPage() {
   });
 
   const { sort, handleSort, sortedData: sortedDistricts } = useSort(districts);
+
+  useEffect(() => {
+    fetch("/api/states?from=districts").then(r => r.json()).then(setStateOptions).catch(() => {});
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -109,7 +113,7 @@ export default function DistrictsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All States</SelectItem>
-                {US_STATES.map((s) => (
+                {stateOptions.map((s) => (
                   <SelectItem key={s} value={s}>
                     {s}
                   </SelectItem>

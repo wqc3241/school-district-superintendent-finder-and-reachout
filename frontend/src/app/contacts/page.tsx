@@ -45,26 +45,8 @@ import {
   Send,
 } from "lucide-react";
 import { getContacts } from "@/lib/api";
-import { Contact, ContactFilters, ContactRole, EmailStatus } from "@/types";
-import { US_STATES } from "@/lib/mock-data";
+import { Contact, ContactFilters } from "@/types";
 import { toast } from "sonner";
-
-const roles: ContactRole[] = [
-  "Superintendent",
-  "Assistant Superintendent",
-  "Director of ELL",
-  "Curriculum Director",
-  "Principal",
-  "Other",
-];
-
-const emailStatuses: EmailStatus[] = [
-  "verified",
-  "unverified",
-  "bounced",
-  "catch_all",
-  "unknown",
-];
 
 const emailStatusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   verified: "default",
@@ -80,6 +62,9 @@ export default function ContactsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [stateOptions, setStateOptions] = useState<string[]>([]);
+  const [roleOptions, setRoleOptions] = useState<string[]>([]);
+  const [emailStatusOptions, setEmailStatusOptions] = useState<string[]>([]);
   const [filters, setFilters] = useState<ContactFilters>({
     search: "",
     role: "",
@@ -90,6 +75,17 @@ export default function ContactsPage() {
   });
 
   const { sort, handleSort, sortedData: sortedContacts } = useSort(contacts);
+
+  useEffect(() => {
+    fetch("/api/filter-options")
+      .then(r => r.json())
+      .then(data => {
+        setStateOptions(data.states || []);
+        setRoleOptions(data.roles || []);
+        setEmailStatusOptions(data.emailStatuses || []);
+      })
+      .catch(() => {});
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -212,7 +208,7 @@ export default function ContactsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Roles</SelectItem>
-                {roles.map((r) => (
+                {roleOptions.map((r) => (
                   <SelectItem key={r} value={r}>
                     {r}
                   </SelectItem>
@@ -225,7 +221,7 @@ export default function ContactsPage() {
                 const val = v as string | null;
                 updateFilter(
                   "emailStatus",
-                  !val || val === "all" ? "" : (val as EmailStatus)
+                  !val || val === "all" ? "" : val
                 );
               }}
             >
@@ -234,7 +230,7 @@ export default function ContactsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Statuses</SelectItem>
-                {emailStatuses.map((s) => (
+                {emailStatusOptions.map((s) => (
                   <SelectItem key={s} value={s}>
                     {s}
                   </SelectItem>
@@ -253,7 +249,7 @@ export default function ContactsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All States</SelectItem>
-                {US_STATES.map((s) => (
+                {stateOptions.map((s) => (
                   <SelectItem key={s} value={s}>
                     {s}
                   </SelectItem>
