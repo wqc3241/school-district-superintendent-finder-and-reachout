@@ -10,6 +10,21 @@ export async function GET(request: NextRequest) {
     const search = params.get("query") || null;
     const role = params.get("role") || null;
     const emailStatus = params.get("email_status") || null;
+    const sortKey = params.get("sort_key") || null;
+    const sortDir = params.get("sort_dir") || null;
+
+    // Whitelist of allowed sort columns (camelCase key → DB column)
+    const sortColumnMap: Record<string, string> = {
+      lastName: "c.last_name",
+      firstName: "c.first_name",
+      role: "c.role",
+      districtName: "d.name",
+      state: "d.state",
+      email: "c.email",
+      emailStatus: "c.email_status",
+      phone: "c.phone",
+      confidenceScore: "c.confidence_score",
+    };
 
     const conditions: string[] = [];
     const values: (string | number | boolean)[] = [];
@@ -58,7 +73,7 @@ export async function GET(request: NextRequest) {
        FROM contacts c
        JOIN districts d ON c.district_id = d.id
        ${whereClause}
-       ORDER BY c.last_name ASC, c.first_name ASC
+       ORDER BY ${sortKey && sortColumnMap[sortKey] ? `${sortColumnMap[sortKey]} ${sortDir === "desc" ? "DESC" : "ASC"} NULLS LAST, ` : ""}c.last_name ASC, c.first_name ASC
        LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
       [...values, size, offset]
     );

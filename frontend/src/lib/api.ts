@@ -47,6 +47,8 @@ export async function getDistricts(
   if (params.search) query.set("query", params.search);
   if (params.hasEslProgram === true) query.set("esl_only", "true");
   if (params.fundingType) query.set("funding_type", params.fundingType);
+  if (params.sortKey) query.set("sort_key", params.sortKey);
+  if (params.sortDir) query.set("sort_dir", params.sortDir);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const raw = await apiFetch<{ items: any[]; total: number; page: number; size: number }>(
@@ -102,6 +104,8 @@ export async function getContacts(
   if (params.search) query.set("query", params.search);
   if (params.role) query.set("role", params.role);
   if (params.emailStatus) query.set("email_status", params.emailStatus);
+  if (params.sortKey) query.set("sort_key", params.sortKey);
+  if (params.sortDir) query.set("sort_dir", params.sortDir);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const raw = await apiFetch<{ items: any[]; total: number; page: number; size: number }>(

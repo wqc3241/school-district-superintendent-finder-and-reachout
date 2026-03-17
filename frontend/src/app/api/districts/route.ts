@@ -11,6 +11,21 @@ export async function GET(request: NextRequest) {
     const eslOnly = params.get("esl_only") === "true";
     const titleIOnly = params.get("title_i_only") === "true";
     const fundingType = params.get("funding_type") || null;
+    const sortKey = params.get("sort_key") || null;
+    const sortDir = params.get("sort_dir") || null;
+
+    // Whitelist of allowed sort columns (camelCase key → DB column)
+    const sortColumnMap: Record<string, string> = {
+      name: "name",
+      state: "state",
+      city: "city",
+      ellStudents: "ell_student_count",
+      ellPercentage: "ell_percentage",
+      titleIFunding: "title_i_allocation",
+      titleIIIFunding: "title_iii_allocation",
+      hasTitleI: "title_i_status",
+      hasEslProgram: "esl_program_status",
+    };
 
     const conditions: string[] = [];
     const values: (string | number | boolean)[] = [];
@@ -61,7 +76,7 @@ export async function GET(request: NextRequest) {
               title_i_status, title_i_allocation, title_iii_allocation,
               created_at, updated_at
        FROM districts ${whereClause}
-       ORDER BY name ASC
+       ORDER BY ${sortKey && sortColumnMap[sortKey] ? `${sortColumnMap[sortKey]} ${sortDir === "desc" ? "DESC" : "ASC"} NULLS LAST, ` : ""}name ASC
        LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
       [...values, size, offset]
     );

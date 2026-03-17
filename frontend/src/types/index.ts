@@ -37,6 +37,8 @@ export interface DistrictFilters {
   fundingType?: "title_i" | "title_iii" | "both" | "";
   ellStudentsMin?: number;
   ellStudentsMax?: number;
+  sortKey?: string;
+  sortDir?: "asc" | "desc";
   page?: number;
   pageSize?: number;
 }
@@ -68,6 +70,8 @@ export interface ContactFilters {
   confidenceScoreMin?: number;
   confidenceScoreMax?: number;
   districtId?: string;
+  sortKey?: string;
+  sortDir?: "asc" | "desc";
   page?: number;
   pageSize?: number;
 }

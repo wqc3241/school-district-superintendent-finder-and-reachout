@@ -6,7 +6,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { SortableHeader } from "@/components/sortable-header";
-import { useSort } from "@/hooks/use-sort";
+import { SortState } from "@/lib/sort";
 import {
   Card,
   CardContent,
@@ -74,7 +74,23 @@ export default function ContactsPage() {
     pageSize: 20,
   });
 
-  const { sort, handleSort, sortedData: sortedContacts } = useSort(contacts);
+  const sort: SortState = {
+    key: filters.sortKey || "",
+    direction: filters.sortDir || null,
+  };
+
+  function handleSort(key: string) {
+    setFilters((prev) => {
+      if (prev.sortKey !== key) {
+        return { ...prev, sortKey: key, sortDir: "asc" as const, page: 1 };
+      }
+      if (prev.sortDir === "asc") {
+        return { ...prev, sortDir: "desc" as const, page: 1 };
+      }
+      const { sortKey: _k, sortDir: _d, ...rest } = prev;
+      return { ...rest, page: 1 };
+    });
+  }
 
   useEffect(() => {
     fetch("/api/filter-options")
@@ -371,7 +387,7 @@ export default function ContactsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sortedContacts.map((c) => (
+                {contacts.map((c) => (
                   <TableRow key={c.id}>
                     <TableCell>
                       <input

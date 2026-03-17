@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SortableHeader } from "@/components/sortable-header";
-import { useSort } from "@/hooks/use-sort";
+import { SortState } from "@/lib/sort";
 import {
   Card,
   CardContent,
@@ -53,7 +53,24 @@ export default function DistrictsPage() {
     pageSize: 20,
   });
 
-  const { sort, handleSort, sortedData: sortedDistricts } = useSort(districts);
+  const sort: SortState = {
+    key: filters.sortKey || "",
+    direction: filters.sortDir || null,
+  };
+
+  function handleSort(key: string) {
+    setFilters((prev) => {
+      if (prev.sortKey !== key) {
+        return { ...prev, sortKey: key, sortDir: "asc" as const, page: 1 };
+      }
+      if (prev.sortDir === "asc") {
+        return { ...prev, sortDir: "desc" as const, page: 1 };
+      }
+      // Reset sort
+      const { sortKey: _k, sortDir: _d, ...rest } = prev;
+      return { ...rest, page: 1 };
+    });
+  }
 
   useEffect(() => {
     fetch("/api/district-filter-options")
@@ -217,7 +234,7 @@ export default function DistrictsPage() {
               onClick={() => {
                 exportToCsv(
                   "districts.csv",
-                  sortedDistricts.map((d) => ({
+                  districts.map((d) => ({
                     name: d.name,
                     state: d.state,
                     city: d.city,
@@ -297,7 +314,7 @@ export default function DistrictsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sortedDistricts.map((d) => (
+                {districts.map((d) => (
                   <TableRow key={d.id} className="cursor-pointer">
                     <TableCell>
                       <Link
