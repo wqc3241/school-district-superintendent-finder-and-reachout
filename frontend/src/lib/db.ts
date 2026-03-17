@@ -1,10 +1,13 @@
 import { Pool } from "pg";
 
+// Strip sslmode from connection string — pg module handles SSL via the ssl option
+const connString = (process.env.DATABASE_URL || "").replace(/[?&]sslmode=[^&]*/g, "");
+
 // Use connection pooling for serverless environments
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: connString,
   ssl: { rejectUnauthorized: false },
-  max: 5,
+  max: 3,
 });
 
 export async function query(text: string, params?: (string | number | boolean | null)[]) {
