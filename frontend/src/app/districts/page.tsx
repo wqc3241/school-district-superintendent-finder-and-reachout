@@ -42,6 +42,8 @@ export default function DistrictsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [stateOptions, setStateOptions] = useState<string[]>([]);
+  const [eslOptions, setEslOptions] = useState<{ value: string; label: string }[]>([{ value: "all", label: "All Programs" }]);
+  const [fundingOptions, setFundingOptions] = useState<{ value: string; label: string }[]>([{ value: "all", label: "All Funding" }]);
   const [filters, setFilters] = useState<DistrictFilters>({
     search: "",
     state: "",
@@ -54,7 +56,14 @@ export default function DistrictsPage() {
   const { sort, handleSort, sortedData: sortedDistricts } = useSort(districts);
 
   useEffect(() => {
-    fetch("/api/states?from=districts").then(r => r.json()).then(setStateOptions).catch(() => {});
+    fetch("/api/district-filter-options")
+      .then(r => r.json())
+      .then(data => {
+        setStateOptions(data.states || []);
+        setEslOptions(data.eslOptions || [{ value: "all", label: "All Programs" }]);
+        setFundingOptions(data.fundingOptions || [{ value: "all", label: "All Funding" }]);
+      })
+      .catch(() => {});
   }, []);
 
   const load = useCallback(async () => {
@@ -142,9 +151,11 @@ export default function DistrictsPage() {
                 <SelectValue placeholder="ESL Program" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Programs</SelectItem>
-                <SelectItem value="yes">Has ESL</SelectItem>
-                <SelectItem value="no">No ESL</SelectItem>
+                {eslOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Select
@@ -161,10 +172,11 @@ export default function DistrictsPage() {
                 <SelectValue placeholder="Funding Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Funding</SelectItem>
-                <SelectItem value="title_i">Title I</SelectItem>
-                <SelectItem value="title_iii">Title III</SelectItem>
-                <SelectItem value="both">Title I & III</SelectItem>
+                {fundingOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Button
