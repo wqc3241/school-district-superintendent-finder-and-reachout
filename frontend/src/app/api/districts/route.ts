@@ -36,11 +36,14 @@ export async function GET(request: NextRequest) {
     }
 
     if (fundingType === "title_i") {
-      conditions.push(`title_i_status = true`);
+      // Title I ONLY — exclude districts that also have Title III
+      conditions.push(`title_i_status = true AND (esl_program_status = false OR esl_program_status IS NULL)`);
     } else if (fundingType === "title_iii") {
-      conditions.push(`title_iii_allocation > 0`);
+      // Title III ONLY — exclude districts that also have Title I
+      conditions.push(`esl_program_status = true AND (title_i_status = false OR title_i_status IS NULL)`);
     } else if (fundingType === "both") {
-      conditions.push(`title_i_status = true AND title_iii_allocation > 0`);
+      // Districts with BOTH Title I and Title III
+      conditions.push(`title_i_status = true AND esl_program_status = true`);
     }
 
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";

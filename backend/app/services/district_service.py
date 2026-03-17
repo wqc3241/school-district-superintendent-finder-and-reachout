@@ -78,11 +78,25 @@ class DistrictService:
             count_stmt = count_stmt.where(District.title_i_status.is_(True))
 
         if funding_type == "title_i":
-            stmt = stmt.where(District.title_i_status.is_(True))
-            count_stmt = count_stmt.where(District.title_i_status.is_(True))
+            # Title I ONLY — exclude districts that also have Title III
+            stmt = stmt.where(
+                District.title_i_status.is_(True),
+                District.esl_program_status.isnot(True),
+            )
+            count_stmt = count_stmt.where(
+                District.title_i_status.is_(True),
+                District.esl_program_status.isnot(True),
+            )
         elif funding_type == "title_iii":
-            stmt = stmt.where(District.esl_program_status.is_(True))
-            count_stmt = count_stmt.where(District.esl_program_status.is_(True))
+            # Title III ONLY — exclude districts that also have Title I
+            stmt = stmt.where(
+                District.esl_program_status.is_(True),
+                District.title_i_status.isnot(True),
+            )
+            count_stmt = count_stmt.where(
+                District.esl_program_status.is_(True),
+                District.title_i_status.isnot(True),
+            )
         elif funding_type == "both":
             stmt = stmt.where(
                 District.title_i_status.is_(True),

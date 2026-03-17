@@ -9,8 +9,8 @@ export async function GET() {
         SELECT
           COUNT(*) FILTER (WHERE esl_program_status = true) AS esl_count,
           COUNT(*) FILTER (WHERE esl_program_status = false OR esl_program_status IS NULL) AS no_esl_count,
-          COUNT(*) FILTER (WHERE title_i_status = true) AS title_i_count,
-          COUNT(*) FILTER (WHERE esl_program_status = true) AS title_iii_count,
+          COUNT(*) FILTER (WHERE title_i_status = true AND (esl_program_status = false OR esl_program_status IS NULL)) AS title_i_only_count,
+          COUNT(*) FILTER (WHERE esl_program_status = true AND (title_i_status = false OR title_i_status IS NULL)) AS title_iii_only_count,
           COUNT(*) FILTER (WHERE title_i_status = true AND esl_program_status = true) AS both_count
         FROM districts
       `),
@@ -29,15 +29,15 @@ export async function GET() {
       eslOptions.push({ value: "no", label: `No ESL (${Number(stats.no_esl_count).toLocaleString()})` });
     }
 
-    // Build funding type options dynamically
+    // Build funding type options — mutually exclusive counts
     const fundingOptions: { value: string; label: string }[] = [
       { value: "all", label: "All Funding" },
     ];
-    if (Number(stats.title_i_count) > 0) {
-      fundingOptions.push({ value: "title_i", label: `Title I (${Number(stats.title_i_count).toLocaleString()})` });
+    if (Number(stats.title_i_only_count) > 0) {
+      fundingOptions.push({ value: "title_i", label: `Title I Only (${Number(stats.title_i_only_count).toLocaleString()})` });
     }
-    if (Number(stats.title_iii_count) > 0) {
-      fundingOptions.push({ value: "title_iii", label: `Title III (${Number(stats.title_iii_count).toLocaleString()})` });
+    if (Number(stats.title_iii_only_count) > 0) {
+      fundingOptions.push({ value: "title_iii", label: `Title III Only (${Number(stats.title_iii_only_count).toLocaleString()})` });
     }
     if (Number(stats.both_count) > 0) {
       fundingOptions.push({ value: "both", label: `Title I & III (${Number(stats.both_count).toLocaleString()})` });
