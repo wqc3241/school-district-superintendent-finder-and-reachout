@@ -227,7 +227,7 @@ export default function ContactsPage() {
               value={filters.role ?? ""}
               onValueChange={(v) => {
                 const val = v as string | null;
-                updateFilter("role", !val || val === "all" ? "" : (val as ContactRole));
+                updateFilter("role", !val || val === "all" ? "" : val);
               }}
             >
               <SelectTrigger className="w-[180px]">
