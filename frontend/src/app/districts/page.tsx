@@ -29,10 +29,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Download } from "lucide-react";
 import { getDistricts } from "@/lib/api";
 import { District, DistrictFilters } from "@/types";
 import { formatNumber, formatCurrency, formatPercent } from "@/lib/format";
+import { Pagination } from "@/components/pagination";
+import { exportToCsv } from "@/lib/export-csv";
 
 export default function DistrictsPage() {
   const [districts, setDistricts] = useState<District[]>([]);
@@ -188,12 +190,54 @@ export default function DistrictsPage() {
       {/* Table */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">
-            {formatNumber(total)} Districts
-          </CardTitle>
-          <CardDescription>
-            Click a row to view district details and contacts.
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base">
+                {formatNumber(total)} Districts
+              </CardTitle>
+              <CardDescription>
+                Click a row to view district details and contacts.
+              </CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                exportToCsv(
+                  "districts.csv",
+                  sortedDistricts.map((d) => ({
+                    name: d.name,
+                    state: d.state,
+                    city: d.city,
+                    phone: d.phone,
+                    website: d.website,
+                    ell_students: d.ellStudents || "",
+                    ell_percentage: d.ellPercentage || "",
+                    title_i_funding: d.titleIFunding || "",
+                    title_iii_funding: d.titleIIIFunding || "",
+                    has_title_i: d.hasTitleI ? "Yes" : "No",
+                    has_esl_program: d.hasEslProgram ? "Yes" : "No",
+                  })),
+                  [
+                    { key: "name", label: "District Name" },
+                    { key: "state", label: "State" },
+                    { key: "city", label: "City" },
+                    { key: "phone", label: "Phone" },
+                    { key: "website", label: "Website" },
+                    { key: "ell_students", label: "ELL Students" },
+                    { key: "ell_percentage", label: "ELL %" },
+                    { key: "title_i_funding", label: "Title I Funding" },
+                    { key: "title_iii_funding", label: "Title III Funding" },
+                    { key: "has_title_i", label: "Title I" },
+                    { key: "has_esl_program", label: "Title III / ESL" },
+                  ]
+                );
+              }}
+            >
+              <Download className="mr-1.5 h-4 w-4" />
+              Export CSV
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="p-0">
           {loading ? (
@@ -285,38 +329,14 @@ export default function DistrictsPage() {
           )}
         </CardContent>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t px-6 py-3">
-            <p className="text-sm text-muted-foreground">
-              Page {filters.page} of {totalPages}
-            </p>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={filters.page === 1}
-                onClick={() =>
-                  setFilters((p) => ({ ...p, page: (p.page ?? 1) - 1 }))
-                }
-              >
-                <ChevronLeft className="mr-1 h-4 w-4" />
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={filters.page === totalPages}
-                onClick={() =>
-                  setFilters((p) => ({ ...p, page: (p.page ?? 1) + 1 }))
-                }
-              >
-                Next
-                <ChevronRight className="ml-1 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
+        <Pagination
+          page={filters.page ?? 1}
+          totalPages={totalPages}
+          total={total}
+          pageSize={filters.pageSize ?? 20}
+          onPageChange={(p) => setFilters((prev) => ({ ...prev, page: p }))}
+          onPageSizeChange={(size) => setFilters((prev) => ({ ...prev, pageSize: size, page: 1 }))}
+        />
       </Card>
 
       {/* Data Source Disclaimer */}

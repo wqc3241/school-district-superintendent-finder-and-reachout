@@ -37,8 +37,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Search,
-  ChevronLeft,
-  ChevronRight,
   ChevronDown,
   Download,
   Mail,
@@ -47,6 +45,8 @@ import {
 import { getContacts } from "@/lib/api";
 import { Contact, ContactFilters } from "@/types";
 import { toast } from "sonner";
+import { Pagination } from "@/components/pagination";
+import { exportToCsv } from "@/lib/export-csv";
 
 const emailStatusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   verified: "default",
@@ -141,9 +141,36 @@ export default function ContactsPage() {
       case "verify":
         toast.success(`Queued ${selected.size} contacts for email verification`);
         break;
-      case "export":
-        toast.success(`Exported ${selected.size} contacts to CSV`);
+      case "export": {
+        const selectedContacts = contacts.filter((c) => selected.has(c.id));
+        exportToCsv(
+          "contacts.csv",
+          selectedContacts.map((c) => ({
+            first_name: c.firstName,
+            last_name: c.lastName,
+            role: c.role,
+            district: c.districtName,
+            state: c.state,
+            email: c.email,
+            email_status: c.emailStatus,
+            phone: c.phone,
+            confidence_score: c.confidenceScore,
+          })),
+          [
+            { key: "first_name", label: "First Name" },
+            { key: "last_name", label: "Last Name" },
+            { key: "role", label: "Role" },
+            { key: "district", label: "District" },
+            { key: "state", label: "State" },
+            { key: "email", label: "Email" },
+            { key: "email_status", label: "Email Status" },
+            { key: "phone", label: "Phone" },
+            { key: "confidence_score", label: "Confidence Score" },
+          ]
+        );
+        toast.success(`Exported ${selectedContacts.length} contacts to CSV`);
         break;
+      }
     }
     setSelected(new Set());
   }
@@ -389,37 +416,14 @@ export default function ContactsPage() {
           )}
         </CardContent>
 
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t px-6 py-3">
-            <p className="text-sm text-muted-foreground">
-              Page {filters.page} of {totalPages}
-            </p>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={filters.page === 1}
-                onClick={() =>
-                  setFilters((p) => ({ ...p, page: (p.page ?? 1) - 1 }))
-                }
-              >
-                <ChevronLeft className="mr-1 h-4 w-4" />
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={filters.page === totalPages}
-                onClick={() =>
-                  setFilters((p) => ({ ...p, page: (p.page ?? 1) + 1 }))
-                }
-              >
-                Next
-                <ChevronRight className="ml-1 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
+        <Pagination
+          page={filters.page ?? 1}
+          totalPages={totalPages}
+          total={total}
+          pageSize={filters.pageSize ?? 20}
+          onPageChange={(p) => setFilters((prev) => ({ ...prev, page: p }))}
+          onPageSizeChange={(size) => setFilters((prev) => ({ ...prev, pageSize: size, page: 1 }))}
+        />
       </Card>
 
       {/* Data Source Disclaimer */}
