@@ -42,31 +42,17 @@ export interface DistrictFilters {
 }
 
 // ── Contact ──────────────────────────────────────────────────────────
-export type EmailStatus =
-  | "verified"
-  | "unverified"
-  | "bounced"
-  | "catch_all"
-  | "unknown";
-
-export type ContactRole =
-  | "Superintendent"
-  | "Assistant Superintendent"
-  | "Director of ELL"
-  | "Curriculum Director"
-  | "Principal"
-  | "Other";
 
 export interface Contact {
   id: string;
   firstName: string;
   lastName: string;
-  role: ContactRole;
+  role: string;
   districtId: string;
   districtName: string;
   state: string;
   email: string;
-  emailStatus: EmailStatus;
+  emailStatus: string;
   phone: string;
   confidenceScore: number;
   linkedinUrl: string;
@@ -76,8 +62,8 @@ export interface Contact {
 
 export interface ContactFilters {
   search?: string;
-  role?: ContactRole | "";
-  emailStatus?: EmailStatus | "";
+  role?: string;
+  emailStatus?: string;
   state?: string;
   confidenceScoreMin?: number;
   confidenceScoreMax?: number;
